@@ -1,0 +1,26 @@
+{
+    "name": "devel/smart-crud-generator",
+    "description": "A Laravel CRUD generator package.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sajjad Hossain",
+            "email": "sajjad.develpr@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Devel\\SmartCrudGenerator\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Devel\\SmartCrudGenerator\\SmartCrudGeneratorServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
