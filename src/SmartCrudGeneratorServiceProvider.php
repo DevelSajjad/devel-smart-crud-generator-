@@ -1,10 +1,10 @@
 <?php
 
-namespace Sajjad\SmartCrud;
+namespace Devel\SmartCrudGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
-class SmartCrudServiceProvider extends ServiceProvider
+class SmartCrudGeneratorServiceProvider extends ServiceProvider
 {
     public function register()
     {
