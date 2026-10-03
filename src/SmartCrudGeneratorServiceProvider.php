@@ -1,10 +1,10 @@
 <?php
 
-namespace Sajjad\SmartCrud;
+namespace Devel\SmartCrudGenerator;
 
 use Illuminate\Support\ServiceProvider;
 
-class SmartCrudServiceProvider extends ServiceProvider
+class SmartCrudGeneratorServiceProvider extends ServiceProvider
 {
     public function register()
     {
@@ -13,6 +13,13 @@ class SmartCrudServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        //
+        $this->loadRoutesFrom(
+            __DIR__.'/../routes/web.php'
+        );
+
+        $this->loadViewsFrom(
+            __DIR__.'/../resources/views',
+            'smart-crud'
+        );
     }
 }
