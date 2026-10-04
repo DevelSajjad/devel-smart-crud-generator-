@@ -10,4 +10,11 @@ class SmartCrudGeneratorController
     {
         return view('smart-crud::generator');
     }
+
+    public function generate(Request $request)
+    {
+        $data = $request->all();
+
+        dd($data);
+    }
 }
