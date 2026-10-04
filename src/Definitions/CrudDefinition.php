@@ -18,6 +18,8 @@ class CrudDefinition
 
     public $viewName;
 
+    public $variableName;
+
     public function __construct(
         string $modelName,
         array $columns = []
@@ -33,6 +35,8 @@ class CrudDefinition
         $this->routeName = $resolver->routeName($modelName);
 
         $this->viewName = $resolver->viewName($modelName);
+
+        $this->variableName = $resolver->variableName($modelName);
 
         foreach ($columns as $column) {
 
