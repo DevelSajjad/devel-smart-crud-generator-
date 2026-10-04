@@ -12,6 +12,12 @@ class CrudDefinition
 
     public $columns = [];
 
+    public $controllerName;
+
+    public $routeName;
+
+    public $viewName;
+
     public function __construct(
         string $modelName,
         array $columns = []
@@ -21,6 +27,12 @@ class CrudDefinition
         $this->modelName = $resolver->modelName($modelName);
 
         $this->tableName =  $resolver->tableName($modelName);
+
+        $this->controllerName = $resolver->controllerName($modelName);
+
+        $this->routeName = $resolver->routeName($modelName);
+
+        $this->viewName = $resolver->viewName($modelName);
 
         foreach ($columns as $column) {
 
