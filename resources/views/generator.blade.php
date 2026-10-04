@@ -42,6 +42,7 @@
     
                             <input
                                 type="text"
+                                name="model_name"
                                 id="model_name"
                                 class="form-control"
                                 placeholder="Example: Product"
