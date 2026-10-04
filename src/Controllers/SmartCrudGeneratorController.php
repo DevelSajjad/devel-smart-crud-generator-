@@ -4,6 +4,7 @@ namespace Devel\SmartCrudGenerator\Controllers;
 
 use Illuminate\Http\Request;
 use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
+use Devel\SmartCrudGenerator\Generator\MigrationGenerator;
 
 class SmartCrudGeneratorController
 {
@@ -106,6 +107,10 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        dd($definition);
+        $generator = new MigrationGenerator();
+
+        $path = $generator->generate($definition);
+
+        dd($path);
     }
 }
