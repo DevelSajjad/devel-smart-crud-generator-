@@ -1,0 +1,37 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="container">
+
+    <h1>Edit {{ '{{ model }}' }}</h1>
+
+    <form
+        action="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".update", $' }}{{ '{{ variable }}' }}{{ ') }}' }}"
+        method="POST"
+    >
+
+        @csrf
+        @method('PUT')
+
+{{ fields }}
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            Update
+        </button>
+
+        <a
+            href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".index") }}' }}"
+            class="btn btn-secondary"
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+@endsection

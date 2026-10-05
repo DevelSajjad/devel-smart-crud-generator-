@@ -8,6 +8,7 @@ use Devel\SmartCrudGenerator\Generator\MigrationGenerator;
 use Devel\SmartCrudGenerator\Generator\ModelGenerator;
 use Devel\SmartCrudGenerator\Generator\ControllerGenerator;
 use Devel\SmartCrudGenerator\Generator\RouteGenerator;
+use Devel\SmartCrudGenerator\Generator\ViewGenerator;
 
 class SmartCrudGeneratorController
 {
@@ -110,7 +111,7 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        $generator = new RouteGenerator();
+        $generator = new ViewGenerator();
 
         $path = $generator->generate($definition);
 
