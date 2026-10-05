@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{{ model }};
+use Illuminate\Http\Request;
+
+class {{ controller }} extends Controller
+{
+    public function index()
+    {
+        $items = {{ model }}::latest()->paginate(15);
+
+        return view('{{ view }}.index', compact('items'));
+    }
+
+    public function create()
+    {
+        return view('{{ view }}.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            {{ validation }}
+        ]);
+
+        {{ model }}::create($validated);
+
+        return redirect()
+            ->route('{{ route }}.index')
+            ->with('success', '{{ model }} created successfully.');
+    }
+
+    public function show({{ model }} ${{ variable }})
+    {
+        return view('{{ view }}.show', compact('{{ variable }}'));
+    }
+
+    public function edit({{ model }} ${{ variable }})
+    {
+        return view('{{ view }}.edit', compact('{{ variable }}'));
+    }
+
+    public function update(
+        Request $request,
+        {{ model }} ${{ variable }}
+    ) {
+        $validated = $request->validate([
+            {{ validation }}
+        ]);
+
+        ${{ variable }}->update($validated);
+
+        return redirect()
+            ->route('{{ route }}.index')
+            ->with('success', '{{ model }} updated successfully.');
+    }
+
+    public function destroy({{ model }} ${{ variable }})
+    {
+        ${{ variable }}->delete();
+
+        return redirect()
+            ->route('{{ route }}.index')
+            ->with('success', '{{ model }} deleted successfully.');
+    }
+}

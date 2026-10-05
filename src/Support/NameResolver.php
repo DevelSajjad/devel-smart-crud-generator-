@@ -76,4 +76,11 @@ class NameResolver
     {
         return $this->modelName($modelName) . '.php';
     }
+
+    public function variableName($modelName)
+    {
+        return Str::camel(
+            $this->modelName($modelName)
+        );
+    }
 }
