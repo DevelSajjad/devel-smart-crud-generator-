@@ -19,10 +19,15 @@ class RouteGenerator
         $content = file_get_contents($path);
         
         $import = $this->generateImport($definition);
-     
+
         if (strpos($content, $import) === false) {
-            $content =
-                $import . "\n\n" . $content;
+            // Insert the use statement right after the opening <?php tag
+            $content = preg_replace(
+                '/^<\?php\s*/',
+                "<?php\n\n" . $import . "\n",
+                $content,
+                1
+            );
         }
 
         $routeMarker =
