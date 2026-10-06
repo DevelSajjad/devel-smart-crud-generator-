@@ -9,9 +9,9 @@ class {{ controller }} extends Controller
 {
     public function index()
     {
-        $items = {{ model }}::latest()->paginate(15);
+        ${{ variable }}s = {{ model }}::latest()->paginate(15);
 
-        return view('{{ view }}.index', compact('items'));
+        return view('{{ view }}.index', compact('{{ variable }}s'));
     }
 
     public function create()

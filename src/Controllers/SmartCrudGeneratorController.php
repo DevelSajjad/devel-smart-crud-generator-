@@ -111,7 +111,7 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        $generator = new ViewGenerator();
+        $generator = new ControllerGenerator();
 
         $path = $generator->generate($definition);
 

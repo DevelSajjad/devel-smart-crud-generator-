@@ -7,7 +7,7 @@
     <h1>Create {{ '{{ model }}' }}</h1>
 
     <form
-        action="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".store") }}' }}"
+        action="{{ route("{{ route }}.store") }}"
         method="POST"
     >
 
@@ -23,7 +23,7 @@
         </button>
 
         <a
-            href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".index") }}' }}"
+            href="{{ route("{{ route }}.index") }}"
             class="btn btn-secondary"
         >
             Cancel

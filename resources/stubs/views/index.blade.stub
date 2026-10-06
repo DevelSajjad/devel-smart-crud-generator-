@@ -8,7 +8,7 @@
         <h1>{{ '{{ model }}' }} List</h1>
 
         <a
-            href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".create") }}' }}"
+            href="{{ route("{{ route }}.create") }}"
             class="btn btn-primary"
         >
             Create {{ '{{ model }}' }}
@@ -17,7 +17,7 @@
 
     @if(session('success'))
         <div class="alert alert-success">
-            {{ '{{ session("success") }}' }}
+            {{ session("success") }}
         </div>
     @endif
 
@@ -25,7 +25,7 @@
 
         <thead>
             <tr>
-{{ headers }}
+                {{ headers }}
                 <th>Actions</th>
             </tr>
         </thead>
@@ -35,26 +35,26 @@
             @forelse(${{ variable }}s as ${{ variable }})
 
                 <tr>
-{{ rows }}
+                    {{ rows }}
 
                     <td>
 
                         <a
-                            href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".show", $' }}{{ '{{ variable }}' }}{{ ') }}' }}"
+                            href="{{ route("{{ route }}.show", ${{ variable }}) }}"
                             class="btn btn-sm btn-info"
                         >
                             View
                         </a>
 
                         <a
-                            href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".edit", $' }}{{ '{{ variable }}' }}{{ ') }}' }}"
+                            href="{{ route("{{ route }}.edit", ${{ variable }}) }}"
                             class="btn btn-sm btn-warning"
                         >
                             Edit
                         </a>
 
                         <form
-                            action="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".destroy", $' }}{{ '{{ variable }}' }}{{ ') }}' }}"
+                            action="{{ route("{{ route }}.destroy", ${{ variable }}) }}"
                             method="POST"
                             style="display:inline;"
                         >
@@ -91,7 +91,7 @@
 
     </table>
 
-    {{ '{{ $' }}{{ '{{ variable }}' }}{{ 's->links() }}' }}
+   {{ ${{ variable }}s->links() }}
 
 </div>
 

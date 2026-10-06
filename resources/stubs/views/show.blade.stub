@@ -8,12 +8,12 @@
 
     <table class="table table-bordered">
 
-{{ rows }}
+    {{ rows }}
 
     </table>
 
     <a
-        href="{{ '{{ route("' }}{{ '{{ route }}' }}{{ '".index") }}' }}"
+        href="{{ route("{{ route }}.index") }}"
         class="btn btn-secondary"
     >
         Back
