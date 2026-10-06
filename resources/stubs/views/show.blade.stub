@@ -1,0 +1,24 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div class="container">
+
+    <h1>{{ '{{ model }}' }} Details</h1>
+
+    <table class="table table-bordered">
+
+    {{ rows }}
+
+    </table>
+
+    <a
+        href="{{ route("{{ route }}.index") }}"
+        class="btn btn-secondary"
+    >
+        Back
+    </a>
+
+</div>
+
+@endsection
