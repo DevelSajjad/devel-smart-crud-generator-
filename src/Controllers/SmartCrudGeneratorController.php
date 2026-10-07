@@ -9,6 +9,7 @@ use Devel\SmartCrudGenerator\Generator\ModelGenerator;
 use Devel\SmartCrudGenerator\Generator\ControllerGenerator;
 use Devel\SmartCrudGenerator\Generator\RouteGenerator;
 use Devel\SmartCrudGenerator\Generator\ViewGenerator;
+use Devel\SmartCrudGenerator\Generator\GenerationManager;
 
 class SmartCrudGeneratorController
 {
@@ -17,7 +18,7 @@ class SmartCrudGeneratorController
         return view('smart-crud::generator');
     }
 
-    public function generate(Request $request)
+    public function generate(Request $request, GenerationManager $manager)
     {
         $data = $request->validate([
             'model_name' => [
@@ -111,10 +112,8 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        $generator = new ControllerGenerator();
+        $results = $manager->generate($definition);
 
-        $path = $generator->generate($definition);
-
-        dd($path);
+        dd($results);
     }
 }
