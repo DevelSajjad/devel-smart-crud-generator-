@@ -111,7 +111,7 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        $generator = new ControllerGenerator();
+        $generator = new MigrationGenerator();
 
         $path = $generator->generate($definition);
 
