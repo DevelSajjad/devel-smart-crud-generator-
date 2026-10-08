@@ -6,6 +6,15 @@ use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
 
 class ModelGenerator
 {
+    public function getPath(CrudDefinition $definition)
+    {
+        return app_path(
+            'Models/' .
+            $definition->modelName .
+            '.php'
+        );
+    }
+
     public function generate(CrudDefinition $definition)
     {
         $stub = file_get_contents(
@@ -26,16 +35,20 @@ class ModelGenerator
             $stub
         );
 
-        $directory = app_path('Models');
+        $path = $this->getPath($definition);
+
+        $directory = dirname($path);
+
+        // $directory = app_path('Models');
 
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        $filename =
-            $definition->modelName . '.php';
+        // $filename =
+        //     $definition->modelName . '.php';
 
-        $path = $directory . '/' . $filename;
+        // $path = $directory . '/' . $filename;
 
         if (file_exists($path)) {
             throw new \RuntimeException(
