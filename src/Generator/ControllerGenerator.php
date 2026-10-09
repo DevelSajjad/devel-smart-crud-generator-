@@ -6,6 +6,14 @@ use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
 
 class ControllerGenerator
 {
+    public function getPath(CrudDefinition $definition) {
+        return app_path(
+            'Http/Controllers/' .
+            $definition->controllerName .
+            '.php'
+        );
+    }
+
     public function generate(CrudDefinition $definition)
     {
         $stub = file_get_contents(
