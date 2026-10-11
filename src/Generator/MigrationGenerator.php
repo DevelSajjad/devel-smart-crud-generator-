@@ -7,8 +7,41 @@ use Devel\SmartCrudGenerator\Definitions\ColumnDefinition;
 
 class MigrationGenerator
 {
+    public function findExistingMigration(
+        CrudDefinition $definition
+    ) {
+        $directory = database_path('migrations');
+
+        if (!is_dir($directory)) {
+            return null;
+        }
+
+        $files = glob(
+            $directory .
+            '/*_create_' .
+            $definition->tableName .
+            '_table.php'
+        );
+
+        if (!empty($files)) {
+            return $files[0];
+        }
+
+        return null;
+    }
+
     public function generate(CrudDefinition $definition)
     {
+        // 👇 Guard: bail out if a migration for this table already exists
+        $existing = $this->findExistingMigration($definition);
+
+        if ($existing !== null) {
+            throw new \RuntimeException(
+                "Migration already exists for table '{$definition->tableName}': " .
+                basename($existing)
+            );
+        }
+
         $columns = $this->generateColumns($definition);
 
         $stub = $this->getStub();

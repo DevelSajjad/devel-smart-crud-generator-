@@ -112,7 +112,21 @@ class SmartCrudGeneratorController
             $data['columns']
         );
 
-        $results = $manager->generate($definition);
+        // $results = $manager->generate($definition);
+
+        try {
+            $results = $manager->generate(
+                $definition
+            );
+        } catch (\RuntimeException $e) {
+            return redirect('/smart-crud-generator')
+                ->withInput()
+                ->withErrors([
+                    'generation' => $e->getMessage()
+                ]);
+        }
+
+        return redirect('/smart-crud-generator')->with('success', 'CRUD generated successfully.');
 
         dd($results);
     }

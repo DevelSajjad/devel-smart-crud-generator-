@@ -6,6 +6,19 @@ use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
 
 class ViewGenerator
 {
+    public function getViewPaths(CrudDefinition $definition) {
+        $directory = resource_path(
+            'views/' . $definition->viewName
+        );
+
+        return [
+            $directory . '/index.blade.php',
+            $directory . '/create.blade.php',
+            $directory . '/edit.blade.php',
+            $directory . '/show.blade.php',
+        ];
+    }
+
     public function generate(CrudDefinition $definition)
     {
         $directory = resource_path(

@@ -3,9 +3,23 @@
 namespace Devel\SmartCrudGenerator\Generator;
 
 use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
+use Illuminate\Support\Facades\Route;
 
 class RouteGenerator
 {
+    public function routeExists(CrudDefinition $definition): bool
+    {
+        $routes = Route::getRoutes();
+
+        foreach ($routes as $route) {
+            if ($route->getName() === $definition->routeName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function generate(CrudDefinition $definition)
     {
         $path = base_path('routes/web.php');
@@ -13,6 +27,14 @@ class RouteGenerator
         if (!file_exists($path)) {
             throw new \RuntimeException(
                 "routes/web.php not found."
+            );
+        }
+
+        // Check whether the route name already exists.
+        if ($this->routeExists($definition)) {
+            throw new \RuntimeException(
+                "Route already exists for " .
+                $definition->routeName
             );
         }
 
