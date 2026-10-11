@@ -43,18 +43,22 @@ class ControllerGenerator
             $stub
         );
 
-        $directory =
-            app_path('Http/Controllers');
+        // $directory =
+        //     app_path('Http/Controllers');
+
+        $path = $this->getPath($definition);
+
+        $directory = dirname($path);
 
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
 
-        $filename =
-            $definition->controllerName . '.php';
+        // $filename =
+        //     $definition->controllerName . '.php';
 
-        $path =
-            $directory . '/' . $filename;
+        // $path =
+        //     $directory . '/' . $filename;
 
         if (file_exists($path)) {
             throw new \RuntimeException(

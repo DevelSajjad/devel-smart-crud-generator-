@@ -1599,6 +1599,398 @@
 
     </header>
 
+    {{-- Generation Error Message --}}
+    {{-- @if(session()->has('errors') &&
+        session('errors')->has('generation'))
+        <div class="alert alert-danger">
+            {!! nl2br(e(session('errors')->first('generation'))) !!}
+        </div>
+    @endif --}}
+
+
+
+    @if(session()->has('errors') &&
+        session('errors')->has('generation'))
+
+        <style>
+            .scg-error {
+                --error-accent: #f43f5e;
+                --error-text: #172033;
+
+                position: relative;
+                display: grid;
+                grid-template-columns: 108px minmax(0, 1fr);
+                gap: 24px;
+                align-items: center;
+                margin: 24px 0;
+                padding: 28px;
+                overflow: hidden;
+                isolation: isolate;
+
+                background:
+                    radial-gradient(
+                        circle at 8% 50%,
+                        rgba(251, 113, 133, .13),
+                        transparent 32%
+                    ),
+                    linear-gradient(135deg, #ffffff 0%, #fff9fc 100%);
+
+                border: 1px solid rgba(244, 63, 94, .16);
+                border-radius: 24px;
+                box-shadow:
+                    0 20px 55px rgba(42, 31, 70, .07),
+                    0 3px 10px rgba(244, 63, 94, .035);
+
+                animation: scg-error-enter .45s ease-out both;
+            }
+
+            .scg-error,
+            .scg-error * {
+                box-sizing: border-box;
+            }
+
+            .scg-error::before {
+                content: "";
+                position: absolute;
+                z-index: -1;
+                top: -95px;
+                right: -65px;
+                width: 220px;
+                height: 220px;
+                background: rgba(251, 113, 133, .07);
+                border: 1px solid rgba(244, 63, 94, .09);
+                border-radius: 50%;
+                pointer-events: none;
+            }
+
+            .scg-error__visual {
+                display: grid;
+                place-items: center;
+                width: 108px;
+                height: 108px;
+                position: relative;
+                border-radius: 30px;
+                background: linear-gradient(145deg, #fff1f4, #ffe4eb);
+                border: 1px solid rgba(244, 63, 94, .12);
+            }
+
+            .scg-error__visual::before,
+            .scg-error__visual::after {
+                content: "";
+                position: absolute;
+                border: 1px solid rgba(244, 63, 94, .13);
+                border-radius: 25px;
+                inset: 9px;
+                transform: rotate(10deg);
+            }
+
+            .scg-error__visual::after {
+                inset: -5px;
+                border-radius: 34px;
+                transform: rotate(-8deg);
+            }
+
+            .scg-error__symbol {
+                display: grid;
+                place-items: center;
+                width: 62px;
+                height: 62px;
+                position: relative;
+                z-index: 1;
+                color: white;
+                background: linear-gradient(145deg, #fb7185, #e11d48);
+                border: 1px solid rgba(255, 255, 255, .65);
+                border-radius: 21px;
+                box-shadow:
+                    0 9px 20px rgba(225, 29, 72, .22),
+                    inset 0 1px 1px rgba(255, 255, 255, .45);
+            }
+
+            .scg-error__content {
+                min-width: 0;
+                position: relative;
+            }
+
+            .scg-error__topline {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .scg-error__badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 6px 10px;
+                color: #be123c;
+                background: #fff0f3;
+                border: 1px solid #ffe0e7;
+                border-radius: 999px;
+                font: 700 11px/1.2 system-ui, sans-serif;
+                letter-spacing: .45px;
+                text-transform: uppercase;
+            }
+
+            .scg-error__dot {
+                width: 7px;
+                height: 7px;
+                flex-shrink: 0;
+                background: #f43f5e;
+                border-radius: 50%;
+                box-shadow: 0 0 0 3px rgba(244, 63, 94, .10);
+            }
+
+            .scg-error__title {
+                margin: 0 40px 8px 0;
+                color: var(--error-text);
+                font: 750 21px/1.35 system-ui, sans-serif;
+                letter-spacing: -.55px;
+            }
+
+            .scg-error__description {
+                margin: 0 0 18px;
+                max-width: 620px;
+                color: #647084;
+                font: 400 13px/1.75 system-ui, sans-serif;
+            }
+
+            .scg-error__details {
+                display: flex;
+                align-items: flex-start;
+                gap: 11px;
+                padding: 14px 15px;
+                color: #9f1239;
+                background: rgba(255, 240, 244, .85);
+                border: 1px solid #ffd7e1;
+                border-radius: 13px;
+                overflow-wrap: anywhere;
+            }
+
+            .scg-error__details-icon {
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+                width: 30px;
+                height: 30px;
+                color: #e11d48;
+                background: white;
+                border: 1px solid #ffe0e7;
+                border-radius: 9px;
+            }
+
+            .scg-error__details-body {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .scg-error__details-label {
+                display: block;
+                margin-bottom: 4px;
+                color: #be123c;
+                font: 700 10px/1.4 system-ui, sans-serif;
+                letter-spacing: .8px;
+                text-transform: uppercase;
+            }
+
+            .scg-error__message {
+                display: block;
+                margin: 0;
+                color: #881337;
+                font: 500 12px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .scg-error__close {
+                position: absolute;
+                top: 18px;
+                right: 18px;
+                display: grid;
+                place-items: center;
+                width: 34px;
+                height: 34px;
+                padding: 0;
+                color: #8c7180;
+                background: rgba(255, 255, 255, .85);
+                border: 1px solid #f2e4e9;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+            .scg-error__close:hover {
+                color: #be123c;
+                background: #fff0f3;
+                border-color: #fecdd8;
+                transform: rotate(90deg);
+            }
+
+            .scg-error__close:focus-visible {
+                outline: 3px solid rgba(244, 63, 94, .35);
+                outline-offset: 3px;
+            }
+
+            .scg-error.is-closing {
+                animation: scg-error-exit .22s ease-in forwards;
+                pointer-events: none;
+            }
+
+            @keyframes scg-error-enter {
+                from {
+                    opacity: 0;
+                    transform: translateY(12px) scale(.99);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            @keyframes scg-error-exit {
+                to {
+                    opacity: 0;
+                    transform: translateY(-6px);
+                }
+            }
+
+            @media (max-width: 640px) {
+                .scg-error {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                    padding: 22px 17px;
+                    border-radius: 19px;
+                }
+
+                .scg-error__visual {
+                    width: 70px;
+                    height: 70px;
+                    border-radius: 22px;
+                }
+
+                .scg-error__visual::before {
+                    border-radius: 18px;
+                    inset: 6px;
+                }
+
+                .scg-error__visual::after {
+                    border-radius: 24px;
+                }
+
+                .scg-error__symbol {
+                    width: 43px;
+                    height: 43px;
+                    border-radius: 15px;
+                }
+
+                .scg-error__symbol svg {
+                    width: 23px;
+                    height: 23px;
+                }
+
+                .scg-error__title {
+                    font-size: 19px;
+                    padding-right: 15px;
+                }
+
+                .scg-error__close {
+                    top: 14px;
+                    right: 14px;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .scg-error,
+                .scg-error.is-closing {
+                    animation: none;
+                }
+
+                .scg-error__close {
+                    transition: none;
+                }
+            }
+        </style>
+
+        <div class="scg-error" id="scg-generation-error" role="alert">
+
+            <div class="scg-error__visual" aria-hidden="true">
+                <div class="scg-error__symbol">
+                    <svg width="31" height="31" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor"
+                        stroke-width="2.3" stroke-linecap="round">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="scg-error__content">
+
+                <div class="scg-error__topline">
+                    <span class="scg-error__badge">
+                        <span class="scg-error__dot"></span>
+                        Generation Error
+                    </span>
+                </div>
+
+                <h3 class="scg-error__title">
+                    CRUD Generation Failed
+                </h3>
+
+                <p class="scg-error__description">
+                    We couldn't complete the CRUD generation process.
+                    Review the diagnostic message below and correct the
+                    issue before trying again.
+                </p>
+
+                <div class="scg-error__details">
+                    <div class="scg-error__details-icon" aria-hidden="true">
+                        <svg width="17" height="17" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16
+                                    a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <path d="M14 2v6h6M8 13h8M8 17h6"/>
+                        </svg>
+                    </div>
+
+                    <div class="scg-error__details-body">
+                        <span class="scg-error__details-label">
+                            Diagnostic details
+                        </span>
+
+                        <p class="scg-error__message">
+                            {!! nl2br(e(session('errors')->first('generation'))) !!}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="scg-error__close"
+                aria-label="Dismiss error"
+                onclick="
+                    const alert = document.getElementById('scg-generation-error');
+                    if (alert) {
+                        alert.classList.add('is-closing');
+                        alert.addEventListener('animationend', () => alert.remove(), { once: true });
+                    }
+                ">
+                <svg width="17" height="17" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round">
+                    <path d="m18 6-12 12M6 6l12 12"/>
+                </svg>
+            </button>
+
+        </div>
+
+    @endif
+
+
+
 
     <!-- =========================================================
          MODEL SETUP
@@ -1701,11 +2093,7 @@
 
     <div class="builder-wrapper">
 
-        <form
-            method="post"
-            action="{{ url('smart-crud/generate') }}"
-            id="crud-generator-form"
-        >
+        <form method="post" action="{{ url('smart-crud/generate') }}" id="crud-generator-form">
 
             @csrf
 
