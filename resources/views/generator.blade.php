@@ -1599,16 +1599,6 @@
 
     </header>
 
-    {{-- Generation Error Message --}}
-    {{-- @if(session()->has('errors') &&
-        session('errors')->has('generation'))
-        <div class="alert alert-danger">
-            {!! nl2br(e(session('errors')->first('generation'))) !!}
-        </div>
-    @endif --}}
-
-
-
     @if(session()->has('errors') &&
         session('errors')->has('generation'))
 
@@ -1989,7 +1979,174 @@
 
     @endif
 
+  
+    @if($errors->any() && !session('errors')->has('generation'))
+        <style>
+            .scg-validation {
+                position: relative;
+                display: flex;
+                gap: 15px;
+                margin: 22px 0;
+                padding: 20px;
+                overflow: hidden;
+                background: linear-gradient(125deg, #fff8f8, #fff 75%);
+                border: 1px solid #f4d5dc;
+                border-radius: 17px;
+                box-shadow: 0 8px 28px rgba(159, 18, 57, .045);
+                animation: scg-validation-in .35s ease-out;
+            }
 
+            .scg-validation::before {
+                content: "";
+                position: absolute;
+                inset: 0 auto 0 0;
+                width: 4px;
+                background: linear-gradient(180deg, #fb7185, #e11d48);
+            }
+
+            .scg-validation__icon {
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+                width: 42px;
+                height: 42px;
+                color: #e11d48;
+                background: #ffe8ee;
+                border: 1px solid #fecdd8;
+                border-radius: 13px;
+            }
+
+            .scg-validation__body {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .scg-validation__heading {
+                margin: 1px 0 5px;
+                color: #881337;
+                font-size: 15px;
+                font-weight: 750;
+                letter-spacing: -.2px;
+            }
+
+            .scg-validation__subtitle {
+                margin: 0 0 13px;
+                color: #9f5366;
+                font-size: 12px;
+                line-height: 1.6;
+            }
+
+            .scg-validation__list {
+                display: grid;
+                gap: 7px;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            .scg-validation__item {
+                display: flex;
+                align-items: flex-start;
+                gap: 9px;
+                padding: 9px 11px;
+                color: #9f1239;
+                background: rgba(255, 255, 255, .8);
+                border: 1px solid #fce7ed;
+                border-radius: 9px;
+                font-size: 12px;
+                line-height: 1.6;
+                overflow-wrap: anywhere;
+            }
+
+            .scg-validation__bullet {
+                flex-shrink: 0;
+                margin-top: 5px;
+                width: 6px;
+                height: 6px;
+                background: #f43f5e;
+                border-radius: 50%;
+            }
+
+            .scg-validation__count {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 23px;
+                height: 23px;
+                margin-left: 6px;
+                padding: 0 6px;
+                color: #be123c;
+                background: #ffe4eb;
+                border-radius: 7px;
+                font-size: 11px;
+                font-weight: 750;
+                vertical-align: middle;
+            }
+
+            @keyframes scg-validation-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(-7px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @media (max-width: 480px) {
+                .scg-validation {
+                    gap: 11px;
+                    padding: 15px 13px;
+                    border-radius: 13px;
+                }
+
+                .scg-validation__icon {
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 10px;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .scg-validation {
+                    animation: none;
+                }
+            }
+        </style>
+
+        <div class="scg-validation" role="alert" aria-labelledby="scg-validation-heading">
+            <div class="scg-validation__icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 8v4"/>
+                    <path d="M12 16h.01"/>
+                </svg>
+            </div>
+
+            <div class="scg-validation__body">
+                <h3 class="scg-validation__heading" id="scg-validation-heading">
+                    Please review your input
+                    <span class="scg-validation__count">{{ $errors->count() }}</span>
+                </h3>
+
+                <p class="scg-validation__subtitle">
+                    A few fields need your attention before we can generate your CRUD.
+                </p>
+
+                <ul class="scg-validation__list">
+                    @foreach($errors->all() as $error)
+                        <li class="scg-validation__item">
+                            <span class="scg-validation__bullet"></span>
+                            <span>{{ $error }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
 
 
     <!-- =========================================================
