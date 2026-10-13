@@ -1599,6 +1599,102 @@
 
     </header>
 
+    
+    @if(session('success'))
+        <div class="scg-success" id="scg-success" role="alert">
+            <div class="scg-success__icon">
+                <svg width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"/>
+                </svg>
+            </div>
+
+            <div class="scg-success__content">
+                <strong>CRUD Generated Successfully!</strong>
+                <p>{{ session('success') }}</p>
+            </div>
+
+            <button type="button" class="scg-success__close"
+                    onclick="document.getElementById('scg-success').remove()"
+                    aria-label="Dismiss notification">
+                &times;
+            </button>
+        </div>
+
+        <style>
+            .scg-success {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 20px 22px;
+                margin: 20px 0;
+                background: linear-gradient(135deg, #f0fdf7, #ffffff);
+                border: 1px solid #c8f0dc;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(16, 185, 129, .08);
+                animation: scg-success-in .35s ease-out;
+            }
+
+            .scg-success__icon {
+                display: grid;
+                place-items: center;
+                width: 48px;
+                height: 48px;
+                flex-shrink: 0;
+                color: #059669;
+                background: #d9fbe9;
+                border-radius: 14px;
+            }
+
+            .scg-success__content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .scg-success__content strong {
+                display: block;
+                color: #065f46;
+                font-size: 15px;
+                margin-bottom: 5px;
+            }
+
+            .scg-success__content p {
+                color: #477567;
+                font-size: 13px;
+                margin: 0;
+                line-height: 1.6;
+            }
+
+            .scg-success__close {
+                border: 0;
+                background: transparent;
+                color: #6b9082;
+                font-size: 25px;
+                cursor: pointer;
+                padding: 4px 8px;
+            }
+
+            @keyframes scg-success-in {
+                from { opacity: 0; transform: translateY(-8px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            @media (max-width: 480px) {
+                .scg-success {
+                    padding: 15px;
+                    gap: 11px;
+                }
+
+                .scg-success__icon {
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+        </style>
+    @endif
+
+
     @if(session()->has('errors') &&
         session('errors')->has('generation'))
 

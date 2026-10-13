@@ -127,7 +127,5 @@ class SmartCrudGeneratorController
         }
 
         return redirect('/smart-crud-generator')->with('success', 'CRUD generated successfully.');
-
-        dd($results);
     }
 }
