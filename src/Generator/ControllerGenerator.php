@@ -14,16 +14,16 @@ class ControllerGenerator
         );
     }
 
-    public function generate(CrudDefinition $definition)
-    {
+    public function buildContent(
+        CrudDefinition $definition
+    ) {
         $stub = file_get_contents(
             __DIR__ . '/../../resources/stubs/controller.stub'
         );
 
-        $validation =
-            $this->generateValidation($definition);
+        $validation = $this->generateValidation($definition);
 
-        $content = str_replace(
+        return str_replace(
             [
                 '{{ model }}',
                 '{{ controller }}',
@@ -42,6 +42,38 @@ class ControllerGenerator
             ],
             $stub
         );
+    }
+
+    public function generate(CrudDefinition $definition)
+    {
+        // $stub = file_get_contents(
+        //     __DIR__ . '/../../resources/stubs/controller.stub'
+        // );
+
+        // $validation =
+        //     $this->generateValidation($definition);
+
+        // $content = str_replace(
+        //     [
+        //         '{{ model }}',
+        //         '{{ controller }}',
+        //         '{{ view }}',
+        //         '{{ route }}',
+        //         '{{ variable }}',
+        //         '{{ validation }}',
+        //     ],
+        //     [
+        //         $definition->modelName,
+        //         $definition->controllerName,
+        //         $definition->viewName,
+        //         $definition->routeName,
+        //         $definition->variableName,
+        //         $validation,
+        //     ],
+        //     $stub
+        // );
+        
+        $content = $this->buildContent($definition);
 
         // $directory =
         //     app_path('Http/Controllers');

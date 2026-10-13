@@ -9,5 +9,5 @@ Route::middleware('web')->group(function() {
     
     Route::post('/smart-crud/generate', [SmartCrudGeneratorController::class, 'generate']);
 
-    Route::get('/smart-crud-generate/preview', [PreviewController::class,  'index']);
+    Route::post('/smart-crud-generate/preview', [PreviewController::class,  'preview']);
 });

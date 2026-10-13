@@ -45,6 +45,21 @@
         </div>
     </div>
 
+    @if(isset($previews))
+        @foreach($previews as $type => $file)
+            <div class="card mb-4">
+                <div class="card-header">
+                    {{ ucfirst($type) }}:
+                    {{ $file['filename'] }}
+                </div>
+
+                <div class="card-body">
+                    <pre class="mb-0"><code>{{ $file['content'] }}</code></pre>
+                </div>
+            </div>
+        @endforeach
+    @endif
+
     <a
         href="{{ url('/smart-crud-generator') }}"
         class="btn btn-secondary"

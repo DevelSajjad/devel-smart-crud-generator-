@@ -3162,6 +3162,15 @@
 
                         </button>
 
+                        <button
+                            type="submit"
+                            formaction="{{ url('/smart-crud-generate/preview') }}"
+                            formmethod="POST"
+                            class="btn btn-primary mt-3"
+                        >
+                            Preview Code
+                        </button>
+
 
                         <button
                             type="submit"
