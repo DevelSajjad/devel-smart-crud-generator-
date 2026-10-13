@@ -30,18 +30,9 @@ class MigrationGenerator
         return null;
     }
 
-    public function generate(CrudDefinition $definition)
-    {
-        // 👇 Guard: bail out if a migration for this table already exists
-        $existing = $this->findExistingMigration($definition);
-
-        if ($existing !== null) {
-            throw new \RuntimeException(
-                "Migration already exists for table '{$definition->tableName}': " .
-                basename($existing)
-            );
-        }
-
+    public function buildContent(
+        CrudDefinition $definition
+    ) {
         $columns = $this->generateColumns($definition);
 
         $stub = $this->getStub();
@@ -50,7 +41,7 @@ class MigrationGenerator
             ucfirst($definition->tableName) .
             'Table';
 
-        $content = str_replace(
+        return str_replace(
             [
                 '{{ class }}',
                 '{{ table }}',
@@ -63,6 +54,43 @@ class MigrationGenerator
             ],
             $stub
         );
+    }
+
+    public function generate(CrudDefinition $definition)
+    {
+        // 👇 Guard: bail out if a migration for this table already exists
+        $existing = $this->findExistingMigration($definition);
+
+        if ($existing !== null) {
+            throw new \RuntimeException(
+                "Migration already exists for table '{$definition->tableName}': " .
+                basename($existing)
+            );
+        }
+
+        // $columns = $this->generateColumns($definition);
+
+        // $stub = $this->getStub();
+
+        // $className = 'Create' .
+        //     ucfirst($definition->tableName) .
+        //     'Table';
+
+        // $content = str_replace(
+        //     [
+        //         '{{ class }}',
+        //         '{{ table }}',
+        //         '{{ columns }}',
+        //     ],
+        //     [
+        //         $className,
+        //         $definition->tableName,
+        //         $columns,
+        //     ],
+        //     $stub
+        // );
+
+        $content = $this->buildContent($definition);
 
         $directory = database_path('migrations');
 

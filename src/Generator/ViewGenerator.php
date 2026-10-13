@@ -56,10 +56,9 @@ class ViewGenerator
         return $directory;
     }
 
-    private function generateView(
+    public function buildViewContent(
         $view,
-        CrudDefinition $definition,
-        $directory
+        CrudDefinition $definition
     ) {
         $stub = file_get_contents(
             __DIR__ .
@@ -68,23 +67,12 @@ class ViewGenerator
             '.blade.stub'
         );
 
-        $fields = $this->generateFields(
-            $definition
-        );
+        $fields = $this->generateFields($definition);
+        $headers = $this->generateHeaders($definition);
+        $rows = $this->generateRows($definition);
+        $showRows = $this->generateShowRows($definition);
 
-        $headers = $this->generateHeaders(
-            $definition
-        );
-
-        $rows = $this->generateRows(
-            $definition
-        );
-
-        $showRows = $this->generateShowRows(
-            $definition
-        );
-
-        $content = str_replace(
+        return str_replace(
             [
                 '{{ model }}',
                 '{{ variable }}',
@@ -100,12 +88,68 @@ class ViewGenerator
                 $definition->routeName,
                 $fields,
                 $headers,
-                $view === 'show'
-                    ? $showRows
-                    : $rows,
+                $view === 'show' ? $showRows : $rows,
                 count($definition->columns) + 1,
             ],
             $stub
+        );
+    }
+
+    private function generateView(
+        $view,
+        CrudDefinition $definition,
+        $directory
+    ) {
+        // $stub = file_get_contents(
+        //     __DIR__ .
+        //     '/../../resources/stubs/views/' .
+        //     $view .
+        //     '.blade.stub'
+        // );
+
+        // $fields = $this->generateFields(
+        //     $definition
+        // );
+
+        // $headers = $this->generateHeaders(
+        //     $definition
+        // );
+
+        // $rows = $this->generateRows(
+        //     $definition
+        // );
+
+        // $showRows = $this->generateShowRows(
+        //     $definition
+        // );
+
+        // $content = str_replace(
+        //     [
+        //         '{{ model }}',
+        //         '{{ variable }}',
+        //         '{{ route }}',
+        //         '{{ fields }}',
+        //         '{{ headers }}',
+        //         '{{ rows }}',
+        //         '{{ colspan }}',
+        //     ],
+        //     [
+        //         $definition->modelName,
+        //         $definition->variableName,
+        //         $definition->routeName,
+        //         $fields,
+        //         $headers,
+        //         $view === 'show'
+        //             ? $showRows
+        //             : $rows,
+        //         count($definition->columns) + 1,
+        //     ],
+        //     $stub
+        // );
+
+        $content = $this->buildViewContent(
+            $view,
+            $definition
         );
 
         $path =

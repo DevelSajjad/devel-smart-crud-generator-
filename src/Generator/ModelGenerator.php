@@ -15,15 +15,14 @@ class ModelGenerator
         );
     }
 
-    public function generate(CrudDefinition $definition)
-    {
+    public function buildContent(CrudDefinition $definition) {
         $stub = file_get_contents(
             __DIR__ . '/../../resources/stubs/model.stub'
         );
 
         $fillable = $this->generateFillable($definition);
 
-        $content = str_replace(
+        return str_replace(
             [
                 '{{ model }}',
                 '{{ fillable }}',
@@ -34,6 +33,17 @@ class ModelGenerator
             ],
             $stub
         );
+    }
+
+    public function generate(CrudDefinition $definition)
+    {
+        $stub = file_get_contents(
+            __DIR__ . '/../../resources/stubs/model.stub'
+        );
+
+        $fillable = $this->generateFillable($definition);
+
+        $content = $this->buildContent($definition);
 
         $path = $this->getPath($definition);
 

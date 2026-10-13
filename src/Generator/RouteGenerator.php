@@ -20,6 +20,12 @@ class RouteGenerator
         return false;
     }
 
+    public function buildContent(
+        CrudDefinition $definition
+    ) {
+        return $this->generateRoute($definition);
+    }
+
     public function generate(CrudDefinition $definition)
     {
         $path = base_path('routes/web.php');
