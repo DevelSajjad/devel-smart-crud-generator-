@@ -366,11 +366,76 @@
         padding: 14px 16px;
         border-top: 1px solid #e5e7eb;
         display: flex;
-        justify-content: flex-end;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .crud-pagination nav {
+    .crud-pagination-summary {
         margin: 0;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .crud-pagination-summary strong {
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .crud-pagination-nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+    }
+
+    .crud-page-link {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #fff;
+        color: #374151;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+    }
+
+    .crud-page-link svg {
+        width: 14px;
+        height: 14px;
+        flex: 0 0 14px;
+    }
+
+    .crud-page-link:hover {
+        border-color: #c7c4ff;
+        background: #f7f7ff;
+        color: #635bff;
+    }
+
+    .crud-page-link.is-active {
+        border-color: #635bff;
+        background: #635bff;
+        color: #fff;
+    }
+
+    .crud-page-link.is-disabled {
+        background: #fafafa;
+        color: #d1d5db;
+        pointer-events: none;
+    }
+
+    .crud-page-ellipsis {
+        min-width: 16px;
+        color: #9ca3af;
+        font-size: 12px;
+        text-align: center;
     }
 
     /* =========================
@@ -411,6 +476,11 @@
         }
 
         .crud-pagination {
+            justify-content: center;
+        }
+
+        .crud-pagination-nav {
+            flex-wrap: wrap;
             justify-content: center;
         }
     }
@@ -847,11 +917,136 @@
 
         <!-- PAGINATION -->
 
-        <div class="crud-pagination">
+        @if(${{ variable }}s->total() > 0)
 
-            {{ ${{ variable }}s->links() }}
+            <div class="crud-pagination">
 
-        </div>
+                <p class="crud-pagination-summary">
+                    Showing
+                    <strong>{{ ${{ variable }}s->firstItem() }}</strong>
+                    to
+                    <strong>{{ ${{ variable }}s->lastItem() }}</strong>
+                    of
+                    <strong>{{ ${{ variable }}s->total() }}</strong>
+                    results
+                </p>
+
+                @if(${{ variable }}s->hasPages())
+
+                    @php
+                        $crudCurrentPage = ${{ variable }}s->currentPage();
+                        $crudLastPage = ${{ variable }}s->lastPage();
+                        $crudPageStart = max(1, $crudCurrentPage - 2);
+                        $crudPageEnd = min($crudLastPage, $crudCurrentPage + 2);
+                    @endphp
+
+                    <nav class="crud-pagination-nav" aria-label="Pagination">
+
+                        @if(${{ variable }}s->onFirstPage())
+
+                            <span class="crud-page-link is-disabled" aria-disabled="true">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m15 18-6-6 6-6"></path>
+                                </svg>
+
+                            </span>
+
+                        @else
+
+                            <a
+                                class="crud-page-link"
+                                href="{{ ${{ variable }}s->previousPageUrl() }}"
+                                rel="prev"
+                                aria-label="Previous page"
+                            >
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m15 18-6-6 6-6"></path>
+                                </svg>
+
+                            </a>
+
+                        @endif
+
+
+                        @if($crudPageStart > 1)
+
+                            <a class="crud-page-link" href="{{ ${{ variable }}s->url(1) }}">1</a>
+
+                            @if($crudPageStart > 2)
+                                <span class="crud-page-ellipsis">…</span>
+                            @endif
+
+                        @endif
+
+
+                        @for($crudPage = $crudPageStart; $crudPage <= $crudPageEnd; $crudPage++)
+
+                            @if($crudPage == $crudCurrentPage)
+
+                                <span class="crud-page-link is-active" aria-current="page">
+                                    {{ $crudPage }}
+                                </span>
+
+                            @else
+
+                                <a class="crud-page-link" href="{{ ${{ variable }}s->url($crudPage) }}">
+                                    {{ $crudPage }}
+                                </a>
+
+                            @endif
+
+                        @endfor
+
+
+                        @if($crudPageEnd < $crudLastPage)
+
+                            @if($crudPageEnd < $crudLastPage - 1)
+                                <span class="crud-page-ellipsis">…</span>
+                            @endif
+
+                            <a class="crud-page-link" href="{{ ${{ variable }}s->url($crudLastPage) }}">
+                                {{ $crudLastPage }}
+                            </a>
+
+                        @endif
+
+
+                        @if(${{ variable }}s->hasMorePages())
+
+                            <a
+                                class="crud-page-link"
+                                href="{{ ${{ variable }}s->nextPageUrl() }}"
+                                rel="next"
+                                aria-label="Next page"
+                            >
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m9 18 6-6-6-6"></path>
+                                </svg>
+
+                            </a>
+
+                        @else
+
+                            <span class="crud-page-link is-disabled" aria-disabled="true">
+
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m9 18 6-6-6-6"></path>
+                                </svg>
+
+                            </span>
+
+                        @endif
+
+                    </nav>
+
+                @endif
+
+            </div>
+
+        @endif
 
     </div>
 

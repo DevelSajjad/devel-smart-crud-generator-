@@ -23,7 +23,9 @@ class RouteGenerator
     public function buildContent(
         CrudDefinition $definition
     ) {
-        return $this->generateRoute($definition);
+        return $this->generateImport($definition)
+            . "\n\n"
+            . $this->generateRoute($definition);
     }
 
     public function generate(CrudDefinition $definition)
@@ -45,18 +47,10 @@ class RouteGenerator
         }
 
         $content = file_get_contents($path);
-        
+
         $import = $this->generateImport($definition);
 
-        if (strpos($content, $import) === false) {
-            // Insert the use statement right after the opening <?php tag
-            $content = preg_replace(
-                '/^<\?php\s*/',
-                "<?php\n\n" . $import . "\n",
-                $content,
-                1
-            );
-        }
+        $content = $this->insertImport($content, $import);
 
         $routeMarker =
             "Route::resource(\n" .
@@ -84,6 +78,63 @@ class RouteGenerator
         );
 
         return $path;
+    }
+
+    private function insertImport($content, $import)
+    {
+        $newline = strpos($content, "\r\n") !== false
+            ? "\r\n"
+            : "\n";
+
+        if (preg_match(
+            '/^' . preg_quote($import, '/') . '\s*$/m',
+            $content
+        )) {
+            return $content;
+        }
+
+        /*
+         * Keep the controller import with the other use
+         * statements. This still works when the file has a
+         * BOM or does not begin with <?php.
+         */
+        if (preg_match_all(
+            '/^use\s+[^;]+;/m',
+            $content,
+            $matches,
+            PREG_OFFSET_CAPTURE
+        )) {
+            $last = end($matches[0]);
+            $insertAt = $last[1] + strlen($last[0]);
+            $after = preg_replace(
+                '/^\r?\n/',
+                '',
+                substr($content, $insertAt),
+                1
+            );
+
+            return substr($content, 0, $insertAt)
+                . $newline
+                . $import
+                . $newline
+                . $after;
+        }
+
+        $updated = preg_replace_callback(
+            '/^\s*<\?php\b/',
+            function ($matches) use ($import, $newline) {
+                return $matches[0] . $newline . $newline . $import;
+            },
+            $content,
+            1,
+            $count
+        );
+
+        if ($count > 0 && is_string($updated)) {
+            return $updated;
+        }
+
+        return $import . $newline . $newline . ltrim($content);
     }
 
     private function generateImport(

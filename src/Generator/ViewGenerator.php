@@ -247,30 +247,11 @@ class ViewGenerator
         $column,
         CrudDefinition $definition
     ) {
-        $variable = $definition->variableName;
-
-        return <<<HTML
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        {$this->label($column->name)}
-                    </label>
-
-                    <input
-                        type="text"
-                        name="{$column->name}"
-                        value="{{ old('{$column->name}', \${$variable}->{$column->name} ?? '') }}"
-                        class="form-control @error('{$column->name}') is-invalid @enderror"
-                    >
-
-                    @error('{$column->name}')
-                        <div class="invalid-feedback">
-                            {{ \$message }}
-                        </div>
-                    @enderror
-
-                </div>
-        HTML;
+        return $this->controlField(
+            $column,
+            $definition,
+            'text'
+        );
     }
 
     private function textareaField(
@@ -278,23 +259,27 @@ class ViewGenerator
         CrudDefinition $definition
     ) {
         $variable = $definition->variableName;
+        $label = $this->label($column->name);
+        $value = $this->oldValue($column, $variable);
 
         return <<<HTML
-                <div class="mb-3">
+                <div class="crud-field crud-field-wide">
 
-                    <label class="form-label">
-                        {$this->label($column->name)}
+                    <label class="crud-label" for="{$column->name}">
+                        {$label}{$this->requiredMark($column)}
                     </label>
 
                     <textarea
+                        id="{$column->name}"
                         name="{$column->name}"
-                        class="form-control @error('{$column->name}') is-invalid @enderror"
-                    >{{ old('{$column->name}', \${$variable}->{$column->name} ?? '') }}</textarea>
+                        rows="4"
+                        class="crud-input @error('{$column->name}') is-invalid @enderror"
+                        placeholder="Enter {$this->placeholder($label)}"
+                        {$this->requiredAttribute($column)}
+                    >{{ {$value} }}</textarea>
 
                     @error('{$column->name}')
-                        <div class="invalid-feedback">
-                            {{ \$message }}
-                        </div>
+                        <p class="crud-error">{{ \$message }}</p>
                     @enderror
 
                 </div>
@@ -305,30 +290,17 @@ class ViewGenerator
         $column,
         CrudDefinition $definition
     ) {
-        $variable = $definition->variableName;
+        $step = in_array($column->type, ['decimal', 'float', 'double'], true)
+            ? 'any'
+            : '1';
 
-        return <<<HTML
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        {$this->label($column->name)}
-                    </label>
-
-                    <input
-                        type="number"
-                        name="{$column->name}"
-                        value="{{ old('{$column->name}', \${$variable}->{$column->name} ?? '') }}"
-                        class="form-control @error('{$column->name}') is-invalid @enderror"
-                    >
-
-                    @error('{$column->name}')
-                        <div class="invalid-feedback">
-                            {{ \$message }}
-                        </div>
-                    @enderror
-
-                </div>
-        HTML;
+        return $this->controlField(
+            $column,
+            $definition,
+            'number',
+            null,
+            'step="' . $step . '"'
+        );
     }
 
     private function dateField(
@@ -369,26 +341,54 @@ class ViewGenerator
         CrudDefinition $definition,
         $type
     ) {
+        $formats = [
+            'date' => 'Y-m-d',
+            'datetime-local' => 'Y-m-d\TH:i',
+            'time' => 'H:i',
+        ];
+
+        return $this->controlField(
+            $column,
+            $definition,
+            $type,
+            $formats[$type] ?? null
+        );
+    }
+
+    private function controlField(
+        $column,
+        CrudDefinition $definition,
+        $type,
+        $format = null,
+        $extraAttributes = ''
+    ) {
         $variable = $definition->variableName;
+        $label = $this->label($column->name);
+        $value = $this->oldValue($column, $variable, $format);
+        $extraAttributes = trim($extraAttributes);
+        $extraAttributes = $extraAttributes === ''
+            ? ''
+            : "\n                        " . $extraAttributes;
 
         return <<<HTML
-                <div class="mb-3">
+                <div class="crud-field">
 
-                    <label class="form-label">
-                        {$this->label($column->name)}
+                    <label class="crud-label" for="{$column->name}">
+                        {$label}{$this->requiredMark($column)}
                     </label>
 
                     <input
+                        id="{$column->name}"
                         type="{$type}"
                         name="{$column->name}"
-                        value="{{ old('{$column->name}', \${$variable}->{$column->name} ?? '') }}"
-                        class="form-control @error('{$column->name}') is-invalid @enderror"
+                        value="{{ {$value} }}"
+                        class="crud-input @error('{$column->name}') is-invalid @enderror"
+                        placeholder="Enter {$this->placeholder($label)}"{$extraAttributes}
+                        {$this->requiredAttribute($column)}
                     >
 
                     @error('{$column->name}')
-                        <div class="invalid-feedback">
-                            {{ \$message }}
-                        </div>
+                        <p class="crud-error">{{ \$message }}</p>
                     @enderror
 
                 </div>
@@ -400,11 +400,12 @@ class ViewGenerator
         CrudDefinition $definition
     ) {
         $variable = $definition->variableName;
+        $label = $this->label($column->name);
 
         return <<<HTML
-                <div class="mb-3">
+                <div class="crud-field crud-field-wide">
 
-                    <div class="form-check">
+                    <label class="crud-switch">
 
                         <input
                             type="hidden"
@@ -413,24 +414,66 @@ class ViewGenerator
                         >
 
                         <input
+                            id="{$column->name}"
                             type="checkbox"
                             name="{$column->name}"
                             value="1"
-                            class="form-check-input"
+                            class="crud-switch-input"
                             @checked(old(
                                 '{$column->name}',
-                                \${$variable}->{$column->name} ?? false
+                                isset(\${$variable}) ? \${$variable}->{$column->name} : false
                             ))
                         >
 
-                        <label class="form-check-label">
-                            {$this->label($column->name)}
-                        </label>
+                        <span class="crud-switch-track" aria-hidden="true"></span>
 
-                    </div>
+                        <span class="crud-switch-copy">
+                            <span class="crud-switch-title">{$label}</span>
+                            <span class="crud-switch-hint">Turn this on to include it with the record.</span>
+                        </span>
+
+                    </label>
+
+                    @error('{$column->name}')
+                        <p class="crud-error">{{ \$message }}</p>
+                    @enderror
 
                 </div>
         HTML;
+    }
+
+    private function oldValue($column, $variable, $format = null)
+    {
+        if ($format) {
+            $current = "isset(\${$variable}) && \${$variable}->{$column->name} !== null && \${$variable}->{$column->name} !== '' ? \\Illuminate\\Support\\Carbon::parse(\${$variable}->{$column->name})->format('{$format}') : ''";
+        } else {
+            $current = "isset(\${$variable}) ? \${$variable}->{$column->name} : ''";
+        }
+
+        return "old('{$column->name}', {$current})";
+    }
+
+    private function placeholder($label)
+    {
+        return strtolower($label);
+    }
+
+    private function requiredMark($column)
+    {
+        if ($column->nullable || $column->type === 'boolean') {
+            return '';
+        }
+
+        return '<span class="crud-required" title="Required">*</span>';
+    }
+
+    private function requiredAttribute($column)
+    {
+        if ($column->nullable || $column->type === 'boolean') {
+            return '';
+        }
+
+        return 'required';
     }
 
     private function generateHeaders(
@@ -473,18 +516,47 @@ class ViewGenerator
         $variable = $definition->variableName;
 
         foreach ($definition->columns as $column) {
-            $label =
-                $this->label($column->name);
+            $label = $this->label($column->name);
+            $wide = in_array($column->type, ['text', 'longText'], true)
+                ? ' crud-detail-wide'
+                : '';
 
             $lines[] = <<<HTML
-                    <tr>
-                        <th>{$label}</th>
-                        <td>{{ \${$variable}->{$column->name} }}</td>
-                    </tr>
+                <div class="crud-detail{$wide}">
+                    <div class="crud-detail-label">{$label}</div>
+                    <div class="crud-detail-value">
+                        {$this->showValue($column, $variable)}
+                    </div>
+                </div>
             HTML;
         }
 
         return implode("\n", $lines);
+    }
+
+    private function showValue($column, $variable)
+    {
+        $field = "\${$variable}->{$column->name}";
+
+        if ($column->type === 'boolean') {
+            return <<<HTML
+            @if({$field} === null || {$field} === '')
+                <span class="crud-detail-empty">Not set</span>
+            @elseif({$field})
+                <span class="crud-pill is-on">Yes</span>
+            @else
+                <span class="crud-pill">No</span>
+            @endif
+            HTML;
+        }
+
+        return <<<HTML
+            @if({$field} === null || {$field} === '')
+                <span class="crud-detail-empty">Not set</span>
+            @else
+                {{ {$field} }}
+            @endif
+            HTML;
     }
 
     private function label($name)

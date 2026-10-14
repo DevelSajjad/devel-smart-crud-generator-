@@ -2,23 +2,367 @@
 
 @section('content')
 
-<div class="container">
+<style>
+    .crud-form-page {
+        padding: 28px 0 56px;
+    }
 
-    <h1>{{ '{{ model }}' }} Details</h1>
+    .crud-studio {
+        display: grid;
+        grid-template-columns: 320px minmax(0, 1fr);
+        min-height: 680px;
+        border-radius: 28px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow:
+            0 24px 60px rgba(20, 24, 32, .12),
+            0 2px 8px rgba(20, 24, 32, .06);
+    }
 
-    <table class="table table-bordered">
+    .crud-stage {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 32px;
+        padding: 28px 26px 30px;
+        color: #fff;
+        background:
+            radial-gradient(420px 260px at 0% 0%, rgba(253, 224, 171, .42), transparent 62%),
+            radial-gradient(360px 280px at 110% 100%, rgba(99, 91, 255, .42), transparent 58%),
+            linear-gradient(168deg, #14181f 0%, #2a3348 52%, #1a1e28 100%);
+    }
 
-    {{ rows }}
+    .crud-stage-back,
+    .crud-stage-delete {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        border: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, .78);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        padding: 0;
+    }
 
-    </table>
+    .crud-stage-back svg,
+    .crud-stage-delete svg {
+        width: 16px;
+        height: 16px;
+    }
 
-    <a
-        href="{{ route("{{ route }}.index") }}"
-        class="btn btn-secondary"
-    >
-        Back
-    </a>
+    .crud-stage-back:hover,
+    .crud-stage-delete:hover {
+        color: #fff;
+    }
+
+    .crud-stage-kicker {
+        margin: 0 0 14px;
+        color: #fde68a;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+    }
+
+    .crud-stage-title {
+        margin: 0;
+        font-size: 46px;
+        line-height: .95;
+        font-weight: 700;
+        letter-spacing: -1.4px;
+    }
+
+    .crud-stage-copy {
+        margin: 16px 0 0;
+        max-width: 250px;
+        color: rgba(255, 255, 255, .72);
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .crud-stage-foot {
+        position: relative;
+        z-index: 1;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .crud-sheet {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background:
+            linear-gradient(180deg, #fcfcfe 0%, #f6f5f2 100%);
+    }
+
+    .crud-sheet-head {
+        padding: 32px 36px 0;
+    }
+
+    .crud-sheet-title {
+        margin: 0;
+        color: #171a21;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -.4px;
+    }
+
+    .crud-sheet-text {
+        margin: 6px 0 0;
+        color: #6b6578;
+        font-size: 13px;
+    }
+
+    .crud-detail-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 26px 36px 8px;
+    }
+
+    .crud-detail {
+        min-width: 0;
+        padding: 16px 18px;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(20, 24, 32, .04);
+    }
+
+    .crud-detail-wide {
+        grid-column: 1 / -1;
+    }
+
+    .crud-detail-label {
+        color: #7a7388;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .crud-detail-value {
+        margin-top: 8px;
+        color: #171a21;
+        font-size: 16px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .crud-detail-empty {
+        color: #b0aab8;
+        font-size: 14px;
+    }
+
+    .crud-pill {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #f3f1f6;
+        color: #6b6578;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .crud-pill.is-on {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .crud-sheet-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: auto;
+        padding: 22px 36px 28px;
+    }
+
+    .crud-dismiss,
+    .crud-commit {
+        height: 46px;
+        padding: 0 18px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .crud-dismiss svg,
+    .crud-commit svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .crud-dismiss {
+        background: transparent;
+        color: #3d4452;
+    }
+
+    .crud-dismiss:hover {
+        background: rgba(20, 24, 32, .05);
+        color: #171a21;
+    }
+
+    .crud-commit {
+        background: #171a21;
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(20, 24, 32, .22);
+    }
+
+    .crud-commit:hover {
+        background: #2a3348;
+        color: #fff;
+    }
+
+    @media (max-width: 900px) {
+        .crud-form-page {
+            padding: 12px 0 28px;
+        }
+
+        .crud-studio,
+        .crud-detail-list {
+            grid-template-columns: 1fr;
+        }
+
+        .crud-studio {
+            border-radius: 20px;
+            min-height: 0;
+        }
+
+        .crud-stage {
+            gap: 22px;
+            padding: 22px 20px;
+        }
+
+        .crud-stage-title {
+            font-size: 36px;
+        }
+
+        .crud-sheet-head,
+        .crud-detail-list {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .crud-sheet-actions {
+            align-items: stretch;
+            flex-direction: column-reverse;
+            padding: 18px;
+        }
+
+        .crud-dismiss,
+        .crud-commit {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container crud-form-page">
+
+    <div class="crud-studio">
+
+        <aside class="crud-stage">
+
+            <a href="{{ route("{{ route }}.index") }}" class="crud-stage-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m15 18-6-6 6-6"></path>
+                </svg>
+                All records
+            </a>
+
+            <div>
+                <p class="crud-stage-kicker">Read only</p>
+                <h1 class="crud-stage-title">View<br>{{ '{{ model }}' }}</h1>
+                <p class="crud-stage-copy">
+                    This {{ strtolower('{{ model }}') }} is shown as it is saved. Edit it when something needs to change.
+                </p>
+            </div>
+
+            <div class="crud-stage-foot">
+                <form
+                    action="{{ route("{{ route }}.destroy", ${{ variable }}) }}"
+                    method="POST"
+                    id="crudDeleteForm"
+                >
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="crud-stage-delete">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18"></path>
+                            <path d="M8 6V4h8v2"></path>
+                            <path d="M19 6l-1 15H6L5 6"></path>
+                        </svg>
+                        Delete this record
+                    </button>
+                </form>
+            </div>
+
+        </aside>
+
+        <section class="crud-sheet">
+
+            <div class="crud-sheet-head">
+                <h2 class="crud-sheet-title">Saved details</h2>
+                <p class="crud-sheet-text">Empty fields stay marked so you can see what is missing.</p>
+            </div>
+
+            <div class="crud-detail-list">
+{{ rows }}
+            </div>
+
+            <div class="crud-sheet-actions">
+                <a href="{{ route("{{ route }}.index") }}" class="crud-dismiss">
+                    Back to list
+                </a>
+                <a href="{{ route("{{ route }}.edit", ${{ variable }}) }}" class="crud-commit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                    </svg>
+                    Edit record
+                </a>
+            </div>
+
+        </section>
+
+    </div>
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('crudDeleteForm');
+
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener('submit', function (event) {
+            var confirmed = window.confirm(
+                'Are you sure you want to delete this record?'
+            );
+
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
 
 @endsection
