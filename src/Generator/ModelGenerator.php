@@ -1,6 +1,7 @@
 <?php
 
 namespace Devel\SmartCrudGenerator\Generator;
+use Devel\SmartCrudGenerator\Support\LaravelCompatibility;
 
 use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
 
@@ -8,10 +9,15 @@ class ModelGenerator
 {
     public function getPath(CrudDefinition $definition)
     {
-        return app_path(
-            'Models/' .
-            $definition->modelName .
-            '.php'
+        // return app_path(
+        //     'Models/' .
+        //     $definition->modelName .
+        //     '.php'
+        // );
+        $compatibility = new LaravelCompatibility();
+
+        return $compatibility->modelPath(
+            $definition->modelName
         );
     }
 
@@ -20,14 +26,18 @@ class ModelGenerator
             __DIR__ . '/../../resources/stubs/model.stub'
         );
 
+        $compatibility = new LaravelCompatibility();
+
         $fillable = $this->generateFillable($definition);
 
         return str_replace(
             [
+                '{{ model_namespace }}',
                 '{{ model }}',
                 '{{ fillable }}',
             ],
             [
+                $compatibility->modelNamespace(),
                 $definition->modelName,
                 $fillable,
             ],
@@ -40,6 +50,8 @@ class ModelGenerator
         $stub = file_get_contents(
             __DIR__ . '/../../resources/stubs/model.stub'
         );
+
+        $compatibility = new LaravelCompatibility();
 
         $fillable = $this->generateFillable($definition);
 

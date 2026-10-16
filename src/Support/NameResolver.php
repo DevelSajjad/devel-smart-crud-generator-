@@ -70,6 +70,14 @@ class NameResolver
     }
 
     /**
+     * Resource route name.
+    */
+    // public function routeName($modelName)
+    // {
+    //     return str_replace('_', '-', $this->tableName($modelName));
+    // }
+
+    /**
      * Model file name.
     */
     public function modelFileName($modelName)

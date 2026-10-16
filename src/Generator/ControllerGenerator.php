@@ -3,6 +3,7 @@
 namespace Devel\SmartCrudGenerator\Generator;
 
 use Devel\SmartCrudGenerator\Definitions\CrudDefinition;
+use Devel\SmartCrudGenerator\Support\LaravelCompatibility;
 
 class ControllerGenerator
 {
@@ -22,9 +23,11 @@ class ControllerGenerator
         );
 
         $validation = $this->generateValidation($definition);
+        $compatibility = new LaravelCompatibility();
 
         return str_replace(
             [
+                '{{ model_namespace }}',
                 '{{ model }}',
                 '{{ controller }}',
                 '{{ view }}',
@@ -33,6 +36,7 @@ class ControllerGenerator
                 '{{ validation }}',
             ],
             [
+                $compatibility->modelNamespace(),
                 $definition->modelName,
                 $definition->controllerName,
                 $definition->viewName,

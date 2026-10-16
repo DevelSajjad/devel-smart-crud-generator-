@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{{ model }};
+use {{ model_namespace }}\{{ model }};
 use Illuminate\Http\Request;
 
 class {{ controller }} extends Controller
